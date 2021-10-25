@@ -1,8 +1,9 @@
 import java.util.*;
 import java.io.*;
+
 /**
- * The "Yoda Calculator"
- * Latest update: October 25, 2021
+ * The "Yoda Calculator" Latest update: October 25, 2021
+ * 
  * @author Abby Bock
  * @author Vitaly Ford
  */
@@ -10,14 +11,14 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         /**
-         * This program will run from the file input or from console. 
+         * This program will run from the file input or from console.
          */
         // Scanner sc = new Scanner(new File("Calculator/src/testInput.txt"));
 
         Scanner sc = new Scanner(System.in);
         System.out.println("WELCOME TO THE CALCULATOR!! ");
 
-        //will continue to take in equations until user chooses to exit
+        // will continue to take in equations until user chooses to exit
         while (true) {
 
             System.out.println("Input your equation or enter q to quit");
@@ -31,7 +32,7 @@ public class Main {
             Stack<String> stack = new Stack<>();
             String num = "";
 
-            //will loop through every character in the line of input
+            // will loop through every character in the line of input
             for (int i = 0; i < line.length(); i++) {
                 String c = line.substring(i, i + 1);
                 if (c.equals(" ")) {
@@ -39,11 +40,11 @@ public class Main {
                     c = line.substring(i, i + 1);
                 }
 
-               /**try-catch to see if the character is an int
-                * if not, then will add completed number to output 
-                * and will sort any operators to polish notation in output
-                * using a stack
-                */
+                /**
+                 * try-catch to see if the character is an int if not, then will add completed
+                 * number to output and will sort any operators to polish notation in output
+                 * using a stack
+                 */
 
                 try {
                     Integer.parseInt(c);
@@ -55,6 +56,10 @@ public class Main {
                     if (stack.isEmpty()) {
                         stack.push(c);
                     } else {
+                        /*
+                         * will pop operators to output according to polish notation while stack is
+                         * full. and will stop at parenthesis
+                         */
                         while (!stack.isEmpty() && opValue(stack.peek()) >= opValue(c) && !c.equals("(")
                                 && !c.equals(")")) {
                             output.add(stack.pop());
@@ -62,6 +67,10 @@ public class Main {
                         if (c.equals("(")) {
                             stack.push(c);
                         } else if (c.equals(")")) {
+                            /**
+                             * will pop operators to output that were between parentheses and then eliminate
+                             * parentheses
+                             */
                             while (!stack.peek().equals("(")) {
                                 output.add(stack.pop());
                             }
@@ -73,22 +82,30 @@ public class Main {
                     num = "";
                 }
             }
+            /**
+             * will add remaining number to output and then add the remaining operator(s)
+             */
             output.add(num);
             while (!stack.isEmpty()) {
                 output.add(stack.pop());
             }
 
             /**
-             * loops through output and completes the arithmetic 
-             * of the given equation
+             * loops through output and completes the arithmetic of the given equation
              */
             for (int i = 0; i < output.size(); i++) {
                 String c = output.get(i);
+                /**
+                 * if the value in output is an integer, it is pushed to stack if it is an
+                 * operator, it will perform the arithmetic operation on the last two numbers as
+                 * in polish notation
+                 */
                 try {
                     Integer.parseInt(c);
                     stack.push(c);
                 } catch (NumberFormatException e) {
-                    String ans = applyOp(Double.parseDouble(stack.pop()), Double.parseDouble(stack.pop()), c.charAt(0));
+                    String ans = applyOp(Double.parseDouble(stack.pop()), 
+                        Double.parseDouble(stack.pop()), c.charAt(0));
                     stack.push(ans);
                 }
             }
@@ -97,14 +114,19 @@ public class Main {
     }
 
     /**
-     * This method performs the basic arithmetic of two numbers at a time. 
-     * @param num1 - most recent number 
+     * This method performs the basic arithmetic of two numbers at a time.
+     * 
+     * @param num1 - most recent number
      * @param num2 - last number before num 1
      * @param op   - the operator
      * @return the string of the answer
      */
     public static String applyOp(double num1, double num2, char op) {
         double ans = 0;
+        /**
+         * Switch statement to determine which operation to perform based on the
+         * operator "op"
+         */
         switch (op) {
         case '+':
             ans = num1 + num2;
@@ -125,6 +147,7 @@ public class Main {
 
     /**
      * This method clarifies the ranking of arithmetic operators
+     * 
      * @param op - the operator being clarified
      * @return an int value for easy comparison
      */
